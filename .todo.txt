@@ -1,1 +1,13 @@
+ui modular
+    plugins
+        event system
+        sidebar
+        content
+        footer
+        context menu
+        init page
 
+backend:
+    sqlite
+    rest http
+    
