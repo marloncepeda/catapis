@@ -15,4 +15,3 @@ ui modular
 backend:
     sqlite
     rest http
-    
