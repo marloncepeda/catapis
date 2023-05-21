@@ -1,6 +1,11 @@
 ui modular
     plugins
         event system
+            q exit
+            ctrl +j sidebar
+            ctrl +n new page
+            ctrl +s send 
+            ctrl +c config
         sidebar
         content
         footer
