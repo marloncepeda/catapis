@@ -15,7 +15,6 @@ use crossterm::{
 
 struct Plugin {
     content: ContentPlugin,
-    sidebar: SidebarPlugin,
 }
 mod sidebar;
 use crate::sidebar::SidebarPlugin;
