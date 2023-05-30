@@ -16,7 +16,7 @@ use crossterm::{
 fn main() -> Result<(), io::Error>{
     enable_raw_mode()?;
     let mut stdout = io::stdout();
-
+    let mut visible_sidebar = true;
 
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
@@ -37,15 +37,19 @@ fn main() -> Result<(), io::Error>{
             let chunks = Layout::default()
                 .direction(Direction::Horizontal)
                 .constraints([
-                    Constraint::Percentage(20),
-                    Constraint::Percentage(80),
+                    Constraint::Percentage(if visible_sidebar {20} else {0}),
+                    Constraint::Percentage(if visible_sidebar {80} else {100}),
                 ])
                 .split(_size);
 
             let sidebar = Block::default()
                 .title("Sidebar")
                 .borders(Borders::ALL);
-            f.render_widget(sidebar,chunks[0]);
+
+            if visible_sidebar {
+                f.render_widget(sidebar,chunks[0]);
+            }
+            
 
             let content_lay = Layout::default()
                 .direction(Direction::Vertical)
@@ -73,6 +77,12 @@ fn main() -> Result<(), io::Error>{
                 break;
             }
         }
+        if let Event::Key(KeyEvent { code, modifiers:event::KeyModifiers::CONTROL }) = event::read()? {
+            if code == KeyCode::Char('j'){
+                visible_sidebar = !visible_sidebar
+            }
+        }
+
     }
 
     Ok(())
