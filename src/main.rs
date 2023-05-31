@@ -1,9 +1,9 @@
 use std::io;
 use tui::{
-    layout::{Constraint, Layout, Direction},
+    layout::{Constraint, Layout, Direction, Rect},
     backend::CrosstermBackend,
     style::{Color, Style},
-    widgets::{Block, Borders},
+    widgets::{Block, Borders, List},
     Terminal,
 };
 
@@ -13,6 +13,34 @@ use crossterm::{
     terminal::{disable_raw_mode, enable_raw_mode},
 };
 
+struct Modal{
+    is_open: bool,
+
+}
+impl Modal{
+    fn new()->Self{
+        Self{
+            is_open: false,
+        }
+    }
+
+    fn render(&self, f: &mut tui::Frame<CrosstermBackend<io::Stdout>>, area:Rect){
+        if self.is_open{
+            let modal = Block::default()
+                .title("Modal")
+                .borders(Borders::ALL)
+                .border_style(Style::default().fg(Color::Black))
+                .style(Style::default().bg(Color::White));
+
+            let form = List::new(vec![
+                ])
+                .block(modal);
+
+            f.render_widget(form,area);
+        }
+    }
+}
+
 fn main() -> Result<(), io::Error>{
     enable_raw_mode()?;
     let mut stdout = io::stdout();
@@ -21,7 +49,10 @@ fn main() -> Result<(), io::Error>{
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
+    let mut modal = Modal::new();
+
     terminal.clear()?;
+    
     loop{
         terminal.draw(|f| {
             let screen = Block::default()
@@ -68,13 +99,21 @@ fn main() -> Result<(), io::Error>{
                 .title("Footer")
                 .borders(Borders::ALL);
             f.render_widget(footer,content_lay[1]);
-            
+    
+            if modal.is_open {
+                let modal_area = center_rect(60,20,_size);
+                modal.render(f, modal_area);
+            }
         });
 
         //manejados de eventos con keyboard
         if let Event::Key(KeyEvent { code, ..}) = event::read()? {
             if code == KeyCode::Char('q'){
                 break;
+            }
+
+            if code == KeyCode::Char('m'){
+                modal.is_open = !modal.is_open
             }
         }
         if let Event::Key(KeyEvent { code, modifiers:event::KeyModifiers::CONTROL }) = event::read()? {
@@ -86,4 +125,10 @@ fn main() -> Result<(), io::Error>{
     }
 
     Ok(())
+}
+
+fn center_rect(width:u16, height:u16, area:Rect) -> Rect{
+    let x = area.x + (area.width - width)/2;
+    let y = area.y + (area.height - height)/2;
+    Rect::new(x,y,width,height)
 }
