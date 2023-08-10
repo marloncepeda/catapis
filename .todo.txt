@@ -15,3 +15,22 @@ ui modular
 backend:
     sqlite
     rest http
+
+idea a estructurar:
+
+crear la carpeta UI/Modeules
+    aca meter contet, sidebar y modal
+    crear sis eventos para keyboards
+
+crear una carpeta de screens
+    aca crear pantalla principal
+    pantalla de trabajo
+    pantalla de editor
+        en ellas llamamos al conjunto de componenste a usar
+
+en el main invocar a las pantallas para hacer el respectivo render
+    crear por cuenta propia un manejador de estados
+    crear por cuenta propia una pila de navegacion para ir adelante o atras segun se necesite
+
+crear la carpeta backend
+    en esta crear los modulos necesarios para usar en la ui

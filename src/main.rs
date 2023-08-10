@@ -13,33 +13,12 @@ use crossterm::{
     terminal::{disable_raw_mode, enable_raw_mode},
 };
 
-struct Modal{
-    is_open: bool,
-
+mod ui {
+    pub mod modal;
 }
-impl Modal{
-    fn new()->Self{
-        Self{
-            is_open: false,
-        }
-    }
+use ui::modal::{Modal, handle_event};
 
-    fn render(&self, f: &mut tui::Frame<CrosstermBackend<io::Stdout>>, area:Rect){
-        if self.is_open{
-            let modal = Block::default()
-                .title("Modal")
-                .borders(Borders::ALL)
-                .border_style(Style::default().fg(Color::Black))
-                .style(Style::default().bg(Color::White));
 
-            let form = List::new(vec![
-                ])
-                .block(modal);
-
-            f.render_widget(form,area);
-        }
-    }
-}
 
 fn main() -> Result<(), io::Error>{
     enable_raw_mode()?;
@@ -49,7 +28,7 @@ fn main() -> Result<(), io::Error>{
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
-    let mut modal = Modal::new();
+    let mut modal = ui::modal::Modal::new();
 
     terminal.clear()?;
     
@@ -107,14 +86,18 @@ fn main() -> Result<(), io::Error>{
         });
 
         //manejados de eventos con keyboard
+        
+        if let Ok(event) = event::read() {
+            handle_event(event, &mut modal);
+        }
+        
+
         if let Event::Key(KeyEvent { code, ..}) = event::read()? {
             if code == KeyCode::Char('q'){
+                disable_raw_mode()?;
                 break;
             }
 
-            if code == KeyCode::Char('m'){
-                modal.is_open = !modal.is_open
-            }
         }
         if let Event::Key(KeyEvent { code, modifiers:event::KeyModifiers::CONTROL }) = event::read()? {
             if code == KeyCode::Char('j'){
