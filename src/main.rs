@@ -89,21 +89,26 @@ fn main() -> Result<(), io::Error>{
         
         if let Ok(event) = event::read() {
             handle_event(event, &mut modal);
+
+            if let Event::Key(KeyEvent { code, .. }) = event {
+                match code {
+                    KeyCode::Char('q') => {
+                        disable_raw_mode()?;
+                        break;
+                    }
+                    _ => {
+                        // Otros manejadores de eventos según corresponda
+                    }
+                }
+            }
         }
         
 
-        if let Event::Key(KeyEvent { code, ..}) = event::read()? {
-            if code == KeyCode::Char('q'){
-                disable_raw_mode()?;
-                break;
-            }
-
-        }
-        if let Event::Key(KeyEvent { code, modifiers:event::KeyModifiers::CONTROL }) = event::read()? {
+        /*if let Event::Key(KeyEvent { code, modifiers:event::KeyModifiers::CONTROL }) = event::read()? {
             if code == KeyCode::Char('j'){
                 visible_sidebar = !visible_sidebar
             }
-        }
+        }*/
 
     }
 
