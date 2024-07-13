@@ -13,3 +13,6 @@ main
    size
    env
 documents
+  html
+  editor
+  css
